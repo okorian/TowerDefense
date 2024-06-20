@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: FastEnemy
   m_EditorClassIdentifier: 
   enemyName: Fast Enemy
-  lives: 20
+  lives: 17
   armor: 1
   value: 5
-  speed: 5
+  speed: 4
   enemyPrefab: {fileID: 422411590403844930, guid: 51271267d07decf4cbbea7ec4f7667fd, type: 3}
   isFlying: 0
   isSplitting: 0

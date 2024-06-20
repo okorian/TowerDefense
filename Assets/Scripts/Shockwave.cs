@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class Shockwave : MonoBehaviour
+public class Shockwave : MonoBehaviour, ISubscriber<RestartGameSignal>
 {
     [SerializeField] LayerMask _enemyLayer;
     [SerializeField] GameObject _shockwaveEffect;
@@ -23,6 +23,7 @@ public class Shockwave : MonoBehaviour
         _expansionSpeed = 15f;
         _pushForce = 5f;
         _cost = 50;
+        Signalbus.Subscirbe<RestartGameSignal>(this);
     }
 
     public void CastShockwave()
@@ -99,5 +100,16 @@ public class Shockwave : MonoBehaviour
         {
             Gizmos.DrawWireSphere(transform.position, _maxRadius);
         }
+    }
+
+    public void OnSignalReceived(RestartGameSignal signal)
+    {
+        _cost = 50;
+        _text.text = $"{_cost} g";
+    }
+
+    private void OnDestroy()
+    {
+        Signalbus.Unsubscribe<RestartGameSignal>(this);
     }
 }

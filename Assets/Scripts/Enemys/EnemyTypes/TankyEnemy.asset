@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: TankyEnemy
   m_EditorClassIdentifier: 
   enemyName: Tanky Enemy
-  lives: 125
+  lives: 120
   armor: 4
   value: 15
   speed: 1

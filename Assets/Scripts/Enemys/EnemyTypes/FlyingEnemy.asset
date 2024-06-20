@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: FlyingEnemy
   m_EditorClassIdentifier: 
   enemyName: Flying Enemy
-  lives: 30
+  lives: 27
   armor: 2
   value: 15
   speed: 1
