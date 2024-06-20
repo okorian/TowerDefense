@@ -19,7 +19,7 @@ public class EnemyWaveManager : MonoBehaviour
         EnemyWave wave = new EnemyWave();
         List<EnemyData> enemys = new List<EnemyData>();
 
-        if(round % 5 == 0)
+        if(round % 10 == 0)
         {
             _mult++;
         }
@@ -56,7 +56,7 @@ public class EnemyWaveManager : MonoBehaviour
 
         if(round % 5 == 0)
         {
-            for (int i = 0; i < round * _mult; i++)
+            for (int i = 0; i < round * _mult -1; i++)
             {
                 enemys.Add(_flyingEnemy);
             }
@@ -72,7 +72,7 @@ public class EnemyWaveManager : MonoBehaviour
 
         if (round >= 8)
         {
-            for (int i = 0; i < ((round / 2) - 3) * _mult; i++)
+            for (int i = 0; i < ((round / 2) - 3) * _mult-1; i++)
             {
                 enemys.Add(_tankyEnemy);
             }
@@ -80,7 +80,7 @@ public class EnemyWaveManager : MonoBehaviour
 
         if (round >= 10)
         {
-            for (int i = 0; i < (round - 5) * _mult; i++)
+            for (int i = 0; i < (round - 5) * _mult-1; i++)
             {
                 enemys.Add(_splittingEnemy);
             }
@@ -88,7 +88,7 @@ public class EnemyWaveManager : MonoBehaviour
 
         if (round > 15)
         {
-            for (int i = 0; i < (round - 15) * _mult; i++)
+            for (int i = 0; i < (round - 15) * _mult-1; i++)
             {
                 enemys.Add(_scalingEnemy);
             }
