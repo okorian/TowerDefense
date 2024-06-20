@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour, ISubscriber<NewTowerSignal>, ISubscriber<GameLostSignal>, ISubscriber<TowerSoldSignal>
 {
+    static int _killedGoldEnemies = 0;
     int _lives;
     int _maxLives;
     int _armor;
@@ -47,6 +48,10 @@ public class Enemy : MonoBehaviour, ISubscriber<NewTowerSignal>, ISubscriber<Gam
                 _lives -= _burnDmg;
                 if (_lives <= 0)
                 {
+                    if (_isGold)
+                    {
+                        _killedGoldEnemies++;
+                    }
                     Signalbus.Fire<EnemyDiedSignal>(new EnemyDiedSignal() { value = _bounty });
 
                     if (_isSplitting)
@@ -92,6 +97,12 @@ public class Enemy : MonoBehaviour, ISubscriber<NewTowerSignal>, ISubscriber<Gam
         _isGold = data.isGold;
         _enemyName = data.enemyName;
         _isPushed = false;
+
+        if (_isGold)
+        {
+            _lives += _lives * _killedGoldEnemies;
+            _bounty += _bounty * _killedGoldEnemies;
+        }
 
         gameObject.transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
 
