@@ -25,14 +25,6 @@ public class Shockwave : MonoBehaviour
         _cost = 50;
     }
 
-    public void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            StartCoroutine(ActivateShockwave());
-        }
-    }
-
     public void CastShockwave()
     {
         if (!_isShockwaveActive && _gameController.PayGold(_cost))
