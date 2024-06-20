@@ -8,6 +8,7 @@ using UnityEngine.SceneManagement;
 public class Menu : MonoBehaviour
 {
     public TMP_Dropdown resolutionDropdown;
+    public bool isMainMenu;
 
     List<Resolution> resolutions = new List<Resolution>
     {
@@ -25,7 +26,10 @@ public class Menu : MonoBehaviour
 
     void Start()
     {
-        Screen.SetResolution(1920, 1080, true);
+        if (isMainMenu)
+        {
+            Screen.SetResolution(1920, 1080, true);
+        }
         resolutionDropdown.onValueChanged.AddListener(delegate { ChangeResolution(); });
     }
 
