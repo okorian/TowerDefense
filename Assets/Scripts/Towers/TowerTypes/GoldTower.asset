@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87c851048f5f9694e83fcc24cc0fd300, type: 3}
+  m_Name: GoldTower
+  m_EditorClassIdentifier: 
+  towerName: Gold Tower
+  dmg: 0100000001000000010000000100000001000000
+  price: 960000002c010000c201000058020000ee020000
+  range:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  attackSpeed:
+  - 10
+  - 8
+  - 6
+  - 4
+  - 2
+  towerSprite: {fileID: -7449118530353650757, guid: 00a345f9c427fcb42aaa4cddb7ef93e7, type: 3}
+  towerPrefab: {fileID: 3950690726804014250, guid: dd2e3dda3a2014449a9e50ae75101749, type: 3}

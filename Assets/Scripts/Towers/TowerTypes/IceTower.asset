@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87c851048f5f9694e83fcc24cc0fd300, type: 3}
+  m_Name: IceTower
+  m_EditorClassIdentifier: 
+  towerName: Ice Tower
+  dmg: 0100000001000000020000000200000004000000
+  price: 4b00000096000000fa0000009001000052030000
+  range:
+  - 1.5
+  - 2.5
+  - 2.5
+  - 3.5
+  - 3.5
+  attackSpeed:
+  - 0.9
+  - 0.85
+  - 0.8
+  - 0.75
+  - 0.6
+  towerSprite: {fileID: 533768258194683654, guid: 9411a5f937c0d264bb185f84fd21490f, type: 3}
+  towerPrefab: {fileID: 3950690726804014250, guid: 44be4abca0c87244ab39e6a4c0b25b87, type: 3}
+  projectileFactory: {fileID: 0}
