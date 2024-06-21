@@ -15,7 +15,7 @@ MonoBehaviour:
   enemyName: Default Enemy
   lives: 20
   armor: 0
-  value: 5
+  value: 2
   speed: 2
   enemyPrefab: {fileID: 422411590403844930, guid: 38c87da7dd293f84f8352e3d20f77afb, type: 3}
   isFlying: 0

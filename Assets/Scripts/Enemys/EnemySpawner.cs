@@ -76,6 +76,8 @@ public class EnemySpawner : MonoBehaviour,
             }
             yield return new WaitForSeconds(wave.spawnSpeed);
         }
+
+        Signalbus.Fire<WaveFinishedSignal>(new WaveFinishedSignal());
     }
 
     IEnumerator SpawnSplittedEnemys(EnemyData enemy, Vector3 position, Vector2[] path, int count)

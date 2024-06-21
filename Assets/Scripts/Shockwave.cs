@@ -105,7 +105,7 @@ public class Shockwave : MonoBehaviour, ISubscriber<RestartGameSignal>
     public void OnSignalReceived(RestartGameSignal signal)
     {
         _cost = 50;
-        _text.text = $"{_cost} g";
+        _text.text = $"{_cost} gold";
     }
 
     private void OnDestroy()

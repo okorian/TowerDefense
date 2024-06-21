@@ -15,7 +15,7 @@ MonoBehaviour:
   enemyName: Fast Enemy
   lives: 17
   armor: 1
-  value: 10
+  value: 5
   speed: 4
   enemyPrefab: {fileID: 422411590403844930, guid: 51271267d07decf4cbbea7ec4f7667fd, type: 3}
   isFlying: 0

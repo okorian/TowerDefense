@@ -15,7 +15,7 @@ MonoBehaviour:
   enemyName: Scaling Enemy
   lives: 0
   armor: 0
-  value: 15
+  value: 10
   speed: 2.5
   enemyPrefab: {fileID: 422411590403844930, guid: 8946a462e17c77645900cddcd14b2223, type: 3}
   isFlying: 0

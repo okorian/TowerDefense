@@ -15,7 +15,7 @@ MonoBehaviour:
   enemyName: Flying Enemy
   lives: 27
   armor: 2
-  value: 20
+  value: 15
   speed: 1
   enemyPrefab: {fileID: 422411590403844930, guid: 4a48d58870630e84f861706048f378c2, type: 3}
   isFlying: 1

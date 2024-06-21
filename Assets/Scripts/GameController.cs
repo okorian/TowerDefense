@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class GameController : MonoBehaviour, ISubscriber<EnemyDiedSignal>, ISubscriber<EnemyReachedGoalSignal>, ISubscriber<EnemySpawnedSignal>
+public class GameController : MonoBehaviour, ISubscriber<EnemyDiedSignal>, ISubscriber<EnemyReachedGoalSignal>, ISubscriber<EnemySpawnedSignal>, ISubscriber<WaveFinishedSignal>
 {
     public static GameController Instance;
 
@@ -66,6 +66,7 @@ public class GameController : MonoBehaviour, ISubscriber<EnemyDiedSignal>, ISubs
         Signalbus.Subscirbe<EnemyDiedSignal>(this);
         Signalbus.Subscirbe<EnemyReachedGoalSignal>(this);
         Signalbus.Subscirbe<EnemySpawnedSignal>(this);
+        Signalbus.Subscirbe<WaveFinishedSignal>(this);
     }
 
     private void Update()
@@ -94,10 +95,13 @@ public class GameController : MonoBehaviour, ISubscriber<EnemyDiedSignal>, ISubs
         _enemyCount = _enemyManager.childCount;
         _enemysTMP.text = "Enemys: " + _enemyCount;
 
-        if (_enemyCount <= 0)
+        if (_enemyCount <= 0 )
         {
-            _roundHasFinished = true;
             _roundIsRunning = false;
+        }
+        else
+        {
+            _roundIsRunning = true;
         }
 
         if (!_roundIsRunning && _roundHasFinished)
@@ -108,11 +112,11 @@ public class GameController : MonoBehaviour, ISubscriber<EnemyDiedSignal>, ISubs
                 _pauseTimer = 0;
                 _round++;
                 _roundTMP.text = "Round: " + _round;
-                _roundHasFinished = false;
 
                 Signalbus.Fire<SpawnEnemyWaveSignal>(new SpawnEnemyWaveSignal() { round = _round });
 
                 _roundIsRunning = true;
+                _roundHasFinished = false;
             }
         }
     }
@@ -172,6 +176,11 @@ public class GameController : MonoBehaviour, ISubscriber<EnemyDiedSignal>, ISubs
         _enemysTMP.text = "Enemys: " + _enemyCount;
     }
 
+    public void OnSignalReceived(WaveFinishedSignal signal)
+    {
+        _roundHasFinished = true;
+    }
+
     public void RestartGame()
     {
         Signalbus.Fire<RestartGameSignal>(new RestartGameSignal());
@@ -202,6 +211,7 @@ public class GameController : MonoBehaviour, ISubscriber<EnemyDiedSignal>, ISubs
         Signalbus.Unsubscribe<EnemyDiedSignal>(this);
         Signalbus.Unsubscribe<EnemyReachedGoalSignal>(this);
         Signalbus.Unsubscribe<EnemySpawnedSignal>(this);
+        Signalbus.Unsubscribe<WaveFinishedSignal>(this);
     }
 
     public void ToMenu()
