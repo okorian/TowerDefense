@@ -5,4 +5,5 @@ using UnityEngine;
 public class SpawnEnemyWaveSignal : ISignal
 {
     public int round;
+    public int buff;
 }

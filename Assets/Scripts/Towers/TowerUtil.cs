@@ -34,6 +34,98 @@ public class TowerUtil
         return closestEnemy;
     }
 
+    public static Enemy FindLowestLivesTarget(Vector3 position, float range)
+    {
+        Collider[] enemiesInRange = Physics.OverlapSphere(position, range * 1.5f, enemyLayer);
+        int lowestLives = int.MaxValue;
+        Enemy lowestEnemy = null;
+
+        foreach (var hitCollider in enemiesInRange)
+        {
+            Enemy enemy = hitCollider.GetComponent<Enemy>();
+            if (enemy != null)
+            {
+                int lives = enemy.GetLives();
+                if (lives < lowestLives)
+                {
+                    lowestLives = lives;
+                    lowestEnemy = enemy;
+                }
+            }
+        }
+
+        return lowestEnemy;
+    }
+
+    public static Enemy FindHighestLivesTarget(Vector3 position, float range)
+    {
+        Collider[] enemiesInRange = Physics.OverlapSphere(position, range * 1.5f, enemyLayer);
+        int highestLives = 0;
+        Enemy highestEnemy = null;
+
+        foreach (var hitCollider in enemiesInRange)
+        {
+            Enemy enemy = hitCollider.GetComponent<Enemy>();
+            if (enemy != null)
+            {
+                int lives = enemy.GetLives();
+                if (lives > highestLives)
+                {
+                    highestLives = lives;
+                    highestEnemy = enemy;
+                }
+            }
+        }
+
+        return highestEnemy;
+    }
+
+    public static Enemy FindLowestArmorTarget(Vector3 position, float range)
+    {
+        Collider[] enemiesInRange = Physics.OverlapSphere(position, range * 1.5f, enemyLayer);
+        int lowestArmor = int.MaxValue;
+        Enemy lowestEnemy = null;
+
+        foreach (var hitCollider in enemiesInRange)
+        {
+            Enemy enemy = hitCollider.GetComponent<Enemy>();
+            if (enemy != null)
+            {
+                int armor = enemy.GetArmor();
+                if (armor < lowestArmor)
+                {
+                    lowestArmor = armor;
+                    lowestEnemy = enemy;
+                }
+            }
+        }
+
+        return lowestEnemy;
+    }
+
+    public static Enemy FindHighestArmorTarget(Vector3 position, float range)
+    {
+        Collider[] enemiesInRange = Physics.OverlapSphere(position, range * 1.5f, enemyLayer);
+        int highestArmor = 0;
+        Enemy highestEnemy = null;
+
+        foreach (var hitCollider in enemiesInRange)
+        {
+            Enemy enemy = hitCollider.GetComponent<Enemy>();
+            if (enemy != null)
+            {
+                int armor = enemy.GetLives();
+                if (armor > highestArmor)
+                {
+                    highestArmor = armor;
+                    highestEnemy = enemy;
+                }
+            }
+        }
+
+        return highestEnemy;
+    }
+
     public static Enemy FindFireTarget(Vector3 position, float range)
     {
         Collider[] enemiesInRange = Physics.OverlapSphere(position, range * 1.5f, enemyLayer);
@@ -49,7 +141,7 @@ public class TowerUtil
 
                 if (burnStacks == 0)
                 {
-                    return targetEnemy;
+                    return enemy;
                 }
 
                 if (burnStacks < minBurnStacks)

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: CanonTower
   m_EditorClassIdentifier: 
   towerName: Canon Tower
-  dmg: 0a0000000f000000190000002300000032000000
+  dmg: 0a000000140000001e0000002800000032000000
   price: 3200000064000000c8000000f4010000e8030000
   range:
   - 5.5
@@ -26,7 +26,7 @@ MonoBehaviour:
   - 4
   - 4
   - 5
-  - 6
+  - 5
   towerSprite: {fileID: -5154703731939352845, guid: ffe0a98a46f3a694682a47a97ec12fff, type: 3}
   towerPrefab: {fileID: 3950690726804014250, guid: 528c02f40483fa543bc2e2c2ac52ba87, type: 3}
   projectileFactory: {fileID: 0}

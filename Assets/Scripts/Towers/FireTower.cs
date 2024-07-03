@@ -22,17 +22,20 @@ public class FireTower : Tower, ISubscriber<RestartGameSignal>
 
         _projectileFactory = data.projectileFactory;
 
+        SetTargetMode(5);
+
         Signalbus.Subscirbe<RestartGameSignal>(this);
     }
+
     private void Update()
     {
         _attackTimer += Time.deltaTime;
 
         if (_attackTimer >= _attackSpeed[_lvl])
         {
-            Enemy enemy = TowerUtil.FindNearestTarget(transform.position, _range[_lvl]);
+            Enemy enemy = FindTarget();
 
-            if(enemy != null)
+            if (enemy != null)
             {
                 _projectileFactory.Spawn(enemy, this);
                 _attackTimer = 0;
@@ -70,5 +73,15 @@ public class FireTower : Tower, ISubscriber<RestartGameSignal>
     public override void SetRangeIndicatorActive(bool active)
     {
         _lineRenderer.enabled = active;
+    }
+
+    public override int GetBurnStacks()
+    {
+        return _burnStacks[_lvl];
+    }
+
+    public override int GetBurnDMG()
+    {
+        return _burnDmg[_lvl];
     }
 }

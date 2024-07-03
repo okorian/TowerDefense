@@ -22,11 +22,14 @@ MonoBehaviour:
   - 3.5
   - 3.5
   attackSpeed:
-  - 0.9
-  - 0.85
-  - 0.8
-  - 0.75
-  - 0.6
+  - 0.5
+  - 0.5
+  - 0.5
+  - 0.5
+  - 0.5
   towerSprite: {fileID: 533768258194683654, guid: 9411a5f937c0d264bb185f84fd21490f, type: 3}
   towerPrefab: {fileID: 3950690726804014250, guid: 44be4abca0c87244ab39e6a4c0b25b87, type: 3}
   projectileFactory: {fileID: 0}
+  isFire: 0
+  isIce: 1
+  isGold: 0

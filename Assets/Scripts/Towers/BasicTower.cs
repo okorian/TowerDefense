@@ -14,7 +14,7 @@ public class BasicTower : Tower, ISubscriber<RestartGameSignal>
         {
             if (_currentTarget == null || !TowerUtil.IsTargetInRange(transform.position, _currentTarget, _range[_lvl]))
             {
-                _currentTarget = TowerUtil.FindNearestTarget(transform.position, _range[_lvl]);
+                _currentTarget = FindTarget();
             }
 
             if (_currentTarget != null)
@@ -39,6 +39,8 @@ public class BasicTower : Tower, ISubscriber<RestartGameSignal>
         _lineRenderer.enabled = false;
 
         _projectileFactory = data.projectileFactory;
+
+        SetTargetMode(0);
 
         Signalbus.Subscirbe<RestartGameSignal>(this);
     }

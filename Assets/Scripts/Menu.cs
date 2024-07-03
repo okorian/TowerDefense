@@ -7,6 +7,8 @@ using UnityEngine.SceneManagement;
 
 public class Menu : MonoBehaviour
 {
+    [SerializeField] DataManager _dataManager;
+
     public TMP_Dropdown resolutionDropdown;
     public bool isMainMenu;
 
@@ -40,8 +42,12 @@ public class Menu : MonoBehaviour
 
     public void Quit()
     {
+        if(_dataManager != null)
+        {
+            _dataManager.SaveData();
+        }
         #if UNITY_EDITOR
-            EditorApplication.isPlaying = false;
+        EditorApplication.isPlaying = false;
         #else
             Application.Quit();
         #endif

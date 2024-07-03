@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: GoldTower
   m_EditorClassIdentifier: 
   towerName: Gold Tower
-  dmg: 0100000001000000010000000100000001000000
-  price: 960000002c010000c201000058020000ee020000
+  dmg: 0500000005000000050000000500000005000000
+  price: 96000000c80000002c01000090010000ee020000
   range:
   - 0
   - 0
@@ -29,3 +29,7 @@ MonoBehaviour:
   - 2
   towerSprite: {fileID: -7449118530353650757, guid: 00a345f9c427fcb42aaa4cddb7ef93e7, type: 3}
   towerPrefab: {fileID: 3950690726804014250, guid: dd2e3dda3a2014449a9e50ae75101749, type: 3}
+  projectileFactory: {fileID: 0}
+  isFire: 0
+  isIce: 0
+  isGold: 1

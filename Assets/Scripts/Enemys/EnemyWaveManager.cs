@@ -26,27 +26,27 @@ public class EnemyWaveManager : MonoBehaviour
 
         if(round <= 10)
         {
-            wave.spawnSpeed = 2.0f;
+            wave.spawnSpeed = 2.25f;
         }
         else if (round <= 15)
         {
-            wave.spawnSpeed = 1.5f;
+            wave.spawnSpeed = 1.25f;
         }
         else if (round <= 20)
         {
-            wave.spawnSpeed = 1.0f;
+            wave.spawnSpeed = 0.5f;
         }
         else if (round <= 25)
         {
-            wave.spawnSpeed = 0.75f;
+            wave.spawnSpeed = 0.25f;
         }
         else if (round <= 30)
         {
-            wave.spawnSpeed = 0.5f;
+            wave.spawnSpeed = 0.1f;
         }
         else
         {
-            wave.spawnSpeed = 0.25f;
+            wave.spawnSpeed = 0.05f;
         }
 
         for (int i = 0; i < 4 + round * _mult; i++)

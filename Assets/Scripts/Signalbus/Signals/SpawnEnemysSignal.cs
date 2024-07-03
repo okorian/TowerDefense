@@ -7,7 +7,5 @@ public class SpawnEnemysSignal : ISignal
     public Vector2 position;
     public Vector2[] path;
     public int count;
-    public int liveMult;
-    public int armorBuff;
-    public int speedBuff;
+    public int buff;
 }

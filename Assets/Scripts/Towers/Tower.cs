@@ -11,6 +11,10 @@ public abstract class Tower : MonoBehaviour
     protected int _x;
     protected int _y;
     protected int _lvl;
+    protected int _targetMode;
+    protected bool _isFire;
+    protected bool _isIce;
+    protected bool _isGold;
     protected int[] _price;
     protected int[] _dmg;
     protected float[] _range;
@@ -27,6 +31,9 @@ public abstract class Tower : MonoBehaviour
         _x = x;
         _y = y;
         _lvl = 0;
+        _isFire = data.isFire;
+        _isIce = data.isIce;
+        _isGold = data.isGold;
         _price = data.price;
         _dmg = data.dmg;
         _range = data.range;
@@ -61,12 +68,16 @@ public abstract class Tower : MonoBehaviour
 
     public abstract void Attack(Enemy enemy);
 
-    public void Sell()
+    public void Sell(string towerName)
     {
         _gameController.EarnGold(GetRefund());
 
+        Map.Instance.PlaceRuin(_x, _y, towerName);
+        /*
         Map.Instance.RemoveTower(_x, _y);
         Signalbus.Fire<TowerSoldSignal>(new TowerSoldSignal());
+        */
+
         Destroy(gameObject);
     }
 
@@ -96,6 +107,15 @@ public abstract class Tower : MonoBehaviour
             return -1;
         }
         return 1f / _attackSpeed[_lvl];
+    }
+
+    public float GetAttackSpeedValue()
+    {
+        if (_lvl >= _attackSpeed.Length)
+        {
+            return -1;
+        }
+        return _attackSpeed[_lvl];
     }
 
     public float GetRange()
@@ -136,4 +156,63 @@ public abstract class Tower : MonoBehaviour
     }
 
     public abstract void SetRangeIndicatorActive(bool active);
+
+    public void SetTargetMode(int targetMode)
+    {
+        _targetMode = targetMode;
+    }
+
+    public int GetTargetMode()
+    {
+        return _targetMode;
+    }
+
+    public bool IsFire()
+    {
+        return _isFire;
+    }
+
+    public bool IsIce()
+    {
+        return _isIce;
+    }
+
+    public bool IsGold()
+    {
+        return _isGold;
+    }
+
+    public Enemy FindTarget()
+    {
+        switch (_targetMode)
+        {
+            case 1:
+                return TowerUtil.FindLowestLivesTarget(transform.position, _range[_lvl]);
+            case 2:
+                return TowerUtil.FindHighestLivesTarget(transform.position, _range[_lvl]);
+            case 3:
+                return TowerUtil.FindLowestArmorTarget(transform.position, _range[_lvl]);
+            case 4:
+                return TowerUtil.FindHighestArmorTarget(transform.position, _range[_lvl]);
+            case 5:
+                return TowerUtil.FindFireTarget(transform.position, _range[_lvl]);
+            default:
+                return TowerUtil.FindNearestTarget(transform.position, _range[_lvl]);
+        }
+    }
+
+    public virtual int GetBurnStacks()
+    {
+        return 0;
+    }
+
+    public virtual int GetBurnDMG()
+    {
+        return 0;
+    }
+
+    public virtual float GetSlow()
+    {
+        return 0;
+    }
 }

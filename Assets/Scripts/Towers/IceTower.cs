@@ -9,12 +9,13 @@ public class IceTower : Tower, ISubscriber<RestartGameSignal>
     [SerializeField] LineRenderer _lineRenderer;
     ParticleSystem _particle;
     float[] _particleLifetime = new float[] { 1, 2.75f, 2.75f, 4, 4 };
+    float[] _slow = new float[] { 0.95f, 0.9f, 0.85f, 0.8f, 0.75f };
 
     private void Update()
     {
         _attackTimer += Time.deltaTime;
 
-        if (_attackTimer >= 0.5f)
+        if (_attackTimer >= _attackSpeed[_lvl])
         {
             Attack(null);
         }
@@ -43,7 +44,7 @@ public class IceTower : Tower, ISubscriber<RestartGameSignal>
             foreach (Enemy enemy in currentTargets)
             {
                 enemy.TakeDamage(_dmg[_lvl]);
-                enemy.ApplySlow(this, _attackSpeed[_lvl]);
+                enemy.ApplySlow(this, _slow[_lvl]);
             }
             _attackTimer = 0;
         }
@@ -52,7 +53,7 @@ public class IceTower : Tower, ISubscriber<RestartGameSignal>
         {
             if (enemy != null)
             { 
-                enemy.RemoveSlow(this, _attackSpeed[_lvl]); 
+                enemy.RemoveSlow(this, _slow[_lvl]); 
             }
         }
         _lastTargets = currentTargets;
@@ -67,7 +68,7 @@ public class IceTower : Tower, ISubscriber<RestartGameSignal>
             {
                 if (enemy != null)
                 {
-                    enemy.RemoveSlow(this, _attackSpeed[_lvl]);
+                    enemy.RemoveSlow(this, _slow[_lvl]);
                 }
             }
 
@@ -78,7 +79,7 @@ public class IceTower : Tower, ISubscriber<RestartGameSignal>
 
             foreach (Enemy enemy in currentTargets)
             {
-                enemy.ApplySlow(this, _attackSpeed[_lvl]);
+                enemy.ApplySlow(this, _slow[_lvl]);
             }
 
             return true;
@@ -97,5 +98,10 @@ public class IceTower : Tower, ISubscriber<RestartGameSignal>
     private void OnDestroy()
     {
         Signalbus.Unsubscribe<RestartGameSignal>(this);
+    }
+
+    public override float GetSlow()
+    {
+        return _slow[_lvl];
     }
 }

@@ -16,6 +16,7 @@ public class Border : MonoBehaviour
         {
             _gameController.EarnGold(other.gameObject.GetComponent<Enemy>().GetBounty() / 2);
             Destroy(other.gameObject);
+            Signalbus.Fire<EnemyDiedOnShockwaveSignal>(new EnemyDiedOnShockwaveSignal());
         };
     }
 }

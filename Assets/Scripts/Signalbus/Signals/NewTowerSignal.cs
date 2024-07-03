@@ -5,4 +5,5 @@ using UnityEngine;
 public class NewTowerSignal : ISignal
 {
     public Vector2 position;
+    public string towerName;
 }

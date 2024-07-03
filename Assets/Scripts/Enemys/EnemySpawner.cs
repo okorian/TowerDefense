@@ -26,11 +26,11 @@ public class EnemySpawner : MonoBehaviour,
         _path = _pathfindingManager.FindPath(_map.startCell.transform.position, _map.goalCell.transform.position);
     }
 
-    void SpawnEnemy(EnemyData enemyData, Vector2 spawnPosition, Vector2[] path) //, int liveMult, int armorBuff, int speedBuff)
+    void SpawnEnemy(EnemyData enemyData, Vector2 spawnPosition, Vector2[] path, int buff)
     {
         GameObject enemy = Instantiate(enemyData.enemyPrefab, new Vector3(spawnPosition.x, spawnPosition.y, -1), Quaternion.identity);
         enemy.transform.parent = transform;
-        enemy.GetComponent<Enemy>().Initialize(enemyData, path);//, liveMult, armorBuff, speedBuff);
+        enemy.GetComponent<Enemy>().Initialize(enemyData, path, buff);
         Signalbus.Fire<EnemySpawnedSignal>(new EnemySpawnedSignal());
     }
 
@@ -44,12 +44,12 @@ public class EnemySpawner : MonoBehaviour,
 
     public void OnSignalReceived(SpawnEnemysSignal signal)
     {
-        StartCoroutine(SpawnSplittedEnemys(_defaultEnemy, signal.position, signal.path, signal.count));//, signal.liveMult, signal.armorBuff, signal.speedBuff));
+        StartCoroutine(SpawnSplittedEnemys(_defaultEnemy, signal.position, signal.path, signal.count, signal.buff));
     }
 
     public void OnSignalReceived(SpawnEnemyWaveSignal signal)
     {
-        _spawnEnemyWave = StartCoroutine(SpawnEnemyWave(_enemyWaveManager.GenerateWave(signal.round)));
+        _spawnEnemyWave = StartCoroutine(SpawnEnemyWave(_enemyWaveManager.GenerateWave(signal.round), signal.buff));
     }
 
     public void OnSignalReceived(GameLostSignal signal)
@@ -61,18 +61,18 @@ public class EnemySpawner : MonoBehaviour,
         }
     }
 
-    IEnumerator SpawnEnemyWave(EnemyWave wave)
+    IEnumerator SpawnEnemyWave(EnemyWave wave, int buff)
     {
         while (wave.enemyQueue.Count > 0)
         {
             EnemyData enemy = wave.enemyQueue.Dequeue();
             if (enemy.isFlying)
             {
-                SpawnEnemy(enemy, _spawnPosition, _pathfindingManager.GetFlyingPath());
+                SpawnEnemy(enemy, _spawnPosition, _pathfindingManager.GetFlyingPath(), buff);
             }
             else
             {
-                SpawnEnemy(enemy, _spawnPosition, _path);
+                SpawnEnemy(enemy, _spawnPosition, _path, buff);
             }
             yield return new WaitForSeconds(wave.spawnSpeed);
         }
@@ -80,11 +80,11 @@ public class EnemySpawner : MonoBehaviour,
         Signalbus.Fire<WaveFinishedSignal>(new WaveFinishedSignal());
     }
 
-    IEnumerator SpawnSplittedEnemys(EnemyData enemy, Vector3 position, Vector2[] path, int count)
+    IEnumerator SpawnSplittedEnemys(EnemyData enemy, Vector3 position, Vector2[] path, int count, int buff)
     {
         for (int i = 0; i < count; i++)
         {
-            SpawnEnemy(enemy, position, path);
+            SpawnEnemy(enemy, position, path, buff);
             
             yield return new WaitForSeconds(0.2f);
         }

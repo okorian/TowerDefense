@@ -5,11 +5,14 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour, ISubscriber<NewTowerSignal>, ISubscriber<GameLostSignal>, ISubscriber<TowerSoldSignal>
 {
+    [SerializeField] GameObject _burning;
+
     static int _killedGoldEnemies = 0;
     int _lives;
     int _maxLives;
     int _armor;
     int _bounty;
+    int _buff;
     float _speed;
     bool _isFlying;
     bool _isSplitting;
@@ -28,7 +31,7 @@ public class Enemy : MonoBehaviour, ISubscriber<NewTowerSignal>, ISubscriber<Gam
     HashSet<(IceTower, float)> _slowedBy = new HashSet<(IceTower, float)>();
 
     int _burnDmg;
-    int _burnStacks;
+    int _burnStacks = 0;
     float _burnTimer;
 
     private void Update()
@@ -41,6 +44,7 @@ public class Enemy : MonoBehaviour, ISubscriber<NewTowerSignal>, ISubscriber<Gam
 
         if (_burnStacks > 0)
         {
+            _burning.SetActive(true);
             _burnTimer += Time.deltaTime;
 
             if (_burnTimer >= 1f)
@@ -51,6 +55,7 @@ public class Enemy : MonoBehaviour, ISubscriber<NewTowerSignal>, ISubscriber<Gam
                     if (_isGold)
                     {
                         _killedGoldEnemies++;
+                        Signalbus.Fire<GoldEnemyKilledSignal>(new GoldEnemyKilledSignal());
                     }
                     Signalbus.Fire<EnemyDiedSignal>(new EnemyDiedSignal() { value = _bounty });
 
@@ -66,9 +71,13 @@ public class Enemy : MonoBehaviour, ISubscriber<NewTowerSignal>, ISubscriber<Gam
                 _burnTimer = 0f;
             }
         }
+        else
+        {
+            _burning.SetActive(false);
+        }
     }
 
-    public void Initialize(EnemyData data, Vector2[] path)//, int liveMult, int armorBuff, int speedBuff)
+    public void Initialize(EnemyData data, Vector2[] path, int buff)
     {
         Signalbus.Subscirbe<NewTowerSignal>(this);
         Signalbus.Subscirbe<GameLostSignal>(this);
@@ -77,19 +86,21 @@ public class Enemy : MonoBehaviour, ISubscriber<NewTowerSignal>, ISubscriber<Gam
         _pathfindingManager = PathfindingManager.Instance;
         _gameController = GameController.Instance;
 
+        _buff = buff;
+
         if (data.isScaling)
         {
-            _lives = _gameController.GetRound() * 4;// * liveMult;
-            _armor = Mathf.Min(_gameController.GetRound() / 5, 24);// + armorBuff;
+            _lives = _gameController.GetRound() * 5 + _buff * 5;
+            _armor = Mathf.Min(_gameController.GetRound() / 2, 40);
         }
         else
         {
-            _lives = data.lives;// * liveMult;
-            _armor = data.armor;//  + armorBuff;
+            _lives = data.lives + _buff * 5;
+            _armor = data.armor + _buff;
         }
 
         _maxLives = _lives;
-        _speed = data.speed;// + speedBuff;
+        _speed = data.speed;
         _bounty = data.value;
         _isFlying = data.isFlying;
         _isSplitting = data.isSplitting;
@@ -102,6 +113,7 @@ public class Enemy : MonoBehaviour, ISubscriber<NewTowerSignal>, ISubscriber<Gam
         {
             _lives += _lives * _killedGoldEnemies;
             _bounty += _bounty * _killedGoldEnemies;
+            Signalbus.Fire<GoldEnemySpawnedSignal>(new GoldEnemySpawnedSignal());
         }
 
         gameObject.transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
@@ -119,7 +131,7 @@ public class Enemy : MonoBehaviour, ISubscriber<NewTowerSignal>, ISubscriber<Gam
             if (_isSplitting)
             {
                 Vector2[] splitPath = RecalculatePath();
-                Signalbus.Fire<SpawnEnemysSignal>(new SpawnEnemysSignal() { position = transform.position, path = splitPath, count = _gameController.GetRound() / 2 });
+                Signalbus.Fire<SpawnEnemysSignal>(new SpawnEnemysSignal() { position = transform.position, path = splitPath, count = _gameController.GetRound() / 2, buff = _buff });
             }
 
             Destroy(gameObject);
@@ -154,6 +166,7 @@ public class Enemy : MonoBehaviour, ISubscriber<NewTowerSignal>, ISubscriber<Gam
             if (!_isGold)
             {
                 Signalbus.Fire<EnemyReachedGoalSignal>(new EnemyReachedGoalSignal());
+                Signalbus.Fire<PlaySoundSignal>(new PlaySoundSignal() { clipName = "looseLife" });
             }
             Signalbus.Fire<EnemyDiedSignal>(new EnemyDiedSignal() { value = 0 });
             Destroy(gameObject);

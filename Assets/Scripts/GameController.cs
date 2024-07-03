@@ -1,25 +1,12 @@
+using System.IO;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class GameController : MonoBehaviour, ISubscriber<EnemyDiedSignal>, ISubscriber<EnemyReachedGoalSignal>, ISubscriber<EnemySpawnedSignal>, ISubscriber<WaveFinishedSignal>
+public class GameController : MonoBehaviour, ISubscriber<EnemyDiedSignal>, ISubscriber<EnemyReachedGoalSignal>, ISubscriber<EnemySpawnedSignal>, ISubscriber<WaveFinishedSignal>, ISubscriber<NewTowerSignal>
 {
     public static GameController Instance;
-
-    int _round;
-    int _lives;
-    [SerializeField] int _gold;
-    int _enemyCount;
-
-    bool _roundIsRunning;
-    bool _roundHasFinished;
-    bool _gameLost;
-
-    float _interest;
-    float _goldTimer;
-    float _interestTimer;
-    float _pauseTimer;
 
     [SerializeField] GameObject _gameLostPanel;
     [SerializeField] TextMeshProUGUI _roundTMP;
@@ -27,6 +14,22 @@ public class GameController : MonoBehaviour, ISubscriber<EnemyDiedSignal>, ISubs
     [SerializeField] TextMeshProUGUI _enemysTMP;
     [SerializeField] TextMeshProUGUI _livesTMP;
     [SerializeField] Transform _enemyManager;
+    [SerializeField] TimeScale _timeScale;
+
+    [SerializeField] int _gold;
+
+    int _round;
+    int _buff;
+    int _lives;
+    int _enemyCount;
+    bool _roundIsRunning;
+    bool _roundHasFinished;
+    bool _gameLost;
+    bool _firstTowerPlaced;
+    //float _interest;
+    //float _interestTimer;
+    float _goldTimer;
+    float _pauseTimer;
 
     private void Awake()
     {
@@ -44,18 +47,20 @@ public class GameController : MonoBehaviour, ISubscriber<EnemyDiedSignal>, ISubs
     private void Start()
     {
         _round = 0;
+        _buff = 0;
         _lives = 20;
         if(_gold == 0)
         {
             _gold = 150;
         }
-        _interest = 0.1f;
+        //_interest = 0.1f;
         _roundIsRunning = false;
         _roundHasFinished = true;
         _gameLost = false;
+        _firstTowerPlaced = false;
 
         _goldTimer = 0f;
-        _interestTimer = 0f;
+        //_interestTimer = 0f;
         _pauseTimer = 0f;
 
         _roundTMP.text = "Round: " + _round;
@@ -67,30 +72,33 @@ public class GameController : MonoBehaviour, ISubscriber<EnemyDiedSignal>, ISubs
         Signalbus.Subscirbe<EnemyReachedGoalSignal>(this);
         Signalbus.Subscirbe<EnemySpawnedSignal>(this);
         Signalbus.Subscirbe<WaveFinishedSignal>(this);
+        Signalbus.Subscirbe<NewTowerSignal>(this);
     }
 
     private void Update()
     {
-        if (_gameLost)
+        if (_gameLost || !_firstTowerPlaced)
         {
             return;
         }
 
         _goldTimer += Time.deltaTime;
-        _interestTimer += Time.deltaTime;
+        //_interestTimer += Time.deltaTime;
 
         if (_goldTimer >= 1)
         {
-            _gold++;
+            EarnGold(1);
             _goldTimer = 0f;
             _goldTMP.text = "Gold: " + _gold;
         }
 
+        /*
         if (_interestTimer >= 30)
         {
             EarnGold((int) (_gold * _interest));
             _interestTimer = 0f;
         }
+        */
 
         _enemyCount = _enemyManager.childCount;
         _enemysTMP.text = "Enemys: " + _enemyCount;
@@ -111,9 +119,14 @@ public class GameController : MonoBehaviour, ISubscriber<EnemyDiedSignal>, ISubs
             {
                 _pauseTimer = 0;
                 _round++;
+                if(_round % 5 == 0)
+                {
+                    _buff++;
+                }
                 _roundTMP.text = "Round: " + _round;
 
-                Signalbus.Fire<SpawnEnemyWaveSignal>(new SpawnEnemyWaveSignal() { round = _round });
+                Signalbus.Fire<SpawnEnemyWaveSignal>(new SpawnEnemyWaveSignal() { round = _round, buff = _buff });
+                Signalbus.Fire<PlaySoundSignal>(new PlaySoundSignal() { clipName = "newRound" });
 
                 _roundIsRunning = true;
                 _roundHasFinished = false;
@@ -128,8 +141,17 @@ public class GameController : MonoBehaviour, ISubscriber<EnemyDiedSignal>, ISubs
 
     public void EarnGold(int gold)
     {
-        _gold += gold;
+        if (_gold > int.MaxValue - gold)
+        {
+            _gold = int.MaxValue;
+        }
+        else
+        {
+            _gold += gold;
+        }
         _goldTMP.text = "Gold: " + _gold;
+
+        Signalbus.Fire<GoldEarnedSignal>(new GoldEarnedSignal() { gold = gold });
     }
 
     public bool PayGold(int gold)
@@ -138,6 +160,7 @@ public class GameController : MonoBehaviour, ISubscriber<EnemyDiedSignal>, ISubs
         {
             _gold -= gold;
             _goldTMP.text = "Gold: " + _gold;
+            Signalbus.Fire<GoldSpentSignal>(new GoldSpentSignal() { gold = gold });
             return true;
         }
         else
@@ -148,6 +171,7 @@ public class GameController : MonoBehaviour, ISubscriber<EnemyDiedSignal>, ISubs
 
     private void GameLost()
     {
+        Signalbus.Fire<GameLostSaveSignal>(new GameLostSaveSignal());
         Signalbus.Fire<GameLostSignal>(new GameLostSignal());
         _roundIsRunning = false;
         _roundHasFinished = false;
@@ -183,18 +207,18 @@ public class GameController : MonoBehaviour, ISubscriber<EnemyDiedSignal>, ISubs
 
     public void RestartGame()
     {
-        Signalbus.Fire<RestartGameSignal>(new RestartGameSignal());
-
         _round = 0;
+        _buff = 0;
         _lives = 20;
         _gold = 150;
-        _interest = 0.1f;
+        //_interest = 0.1f;
         _roundIsRunning = false;
         _roundHasFinished = true;
         _gameLost = false;
+        _firstTowerPlaced = false;
 
-        _goldTimer = 0f;
-        _interestTimer = 0f;
+         _goldTimer = 0f;
+        //_interestTimer = 0f;
         _pauseTimer = 0f;
         _enemyCount = 0;
 
@@ -203,6 +227,9 @@ public class GameController : MonoBehaviour, ISubscriber<EnemyDiedSignal>, ISubs
         _livesTMP.text = "Lives: " + _lives;
         _enemysTMP.text = "Enemys: " + _enemyCount;
 
+        _timeScale.ScaleTime(1f);
+
+        Signalbus.Fire<RestartGameSignal>(new RestartGameSignal());
         _gameLostPanel.SetActive(false);
     }
 
@@ -212,6 +239,7 @@ public class GameController : MonoBehaviour, ISubscriber<EnemyDiedSignal>, ISubs
         Signalbus.Unsubscribe<EnemyReachedGoalSignal>(this);
         Signalbus.Unsubscribe<EnemySpawnedSignal>(this);
         Signalbus.Unsubscribe<WaveFinishedSignal>(this);
+        Signalbus.Unsubscribe<NewTowerSignal>(this);
     }
 
     public void ToMenu()
@@ -227,5 +255,19 @@ public class GameController : MonoBehaviour, ISubscriber<EnemyDiedSignal>, ISubs
 #else
             Application.Quit();
 #endif
+    }
+
+    public void OnSignalReceived(NewTowerSignal signal)
+    {
+        if(!_firstTowerPlaced)
+        {
+            _timeScale.ResumeTime();
+            _firstTowerPlaced = true;
+        }
+    }
+
+    public int GetLives()
+    {
+        return _lives;
     }
 }

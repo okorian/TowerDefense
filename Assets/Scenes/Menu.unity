@@ -2280,9 +2280,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 468edff9a3fd4de4aa882d9e56bcbff0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  audioSource: {fileID: 955822646}
-  shockwave: {fileID: 8300000, guid: 18281e402f89a0549a89e0a88db968c5, type: 3}
-  ui: {fileID: 0}
+  _audioSource: {fileID: 955822646}
+  _shockwave: {fileID: 8300000, guid: 18281e402f89a0549a89e0a88db968c5, type: 3}
+  _looseLife: {fileID: 0}
 --- !u!82 &955822646
 AudioSource:
   m_ObjectHideFlags: 0

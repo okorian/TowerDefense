@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: FireTower
   m_EditorClassIdentifier: 
   towerName: Fire Tower
-  dmg: 030000000500000007000000090000000b000000
+  dmg: 0200000003000000040000000500000005000000
   price: 4b00000096000000fa0000009001000084030000
   range:
   - 1.5
@@ -26,7 +26,8 @@ MonoBehaviour:
   - 3
   - 2
   - 2
-  - 1
+  - 1.5
   towerSprite: {fileID: -5050717664407116506, guid: a06c0a10dc220fe49a1ab6f2b78c0021, type: 3}
   towerPrefab: {fileID: 3950690726804014250, guid: ec47a16ffe2dfea4ca6c46c85b0758d3, type: 3}
   projectileFactory: {fileID: 0}
+  isFire: 1

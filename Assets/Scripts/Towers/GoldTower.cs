@@ -4,7 +4,15 @@ using UnityEngine;
 
 public class GoldTower : Tower, ISubscriber<GameLostSignal>, ISubscriber<RestartGameSignal>
 {
+    [SerializeField] GameObject _money;
+    Vector3 _originalPosition;
+
     bool _gameLost = false;
+
+    private void Start()
+    {
+        _originalPosition = _money.transform.position;
+    }
 
     private void Update()
     {
@@ -16,6 +24,7 @@ public class GoldTower : Tower, ISubscriber<GameLostSignal>, ISubscriber<Restart
             {
                 _gameController.EarnGold(_dmg[_lvl]);
                 _attackTimer = 0f;
+                StartCoroutine(ShowMoneyAnimation());
             }
         }
     }
@@ -47,5 +56,25 @@ public class GoldTower : Tower, ISubscriber<GameLostSignal>, ISubscriber<Restart
     public void OnSignalReceived(GameLostSignal signal)
     {
         _gameLost = true;
+    }
+
+    IEnumerator ShowMoneyAnimation()
+    {
+        _money.SetActive(true);
+
+        Vector3 targetPosition = _money.transform.position + Vector3.up;
+        float duration = 1f;
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / duration);
+            _money.transform.position = Vector3.Lerp(_originalPosition, targetPosition, t);
+            yield return null;
+        }
+
+        _money.transform.position = _originalPosition;
+        _money.SetActive(false);
     }
 }

@@ -5,10 +5,11 @@ using UnityEngine;
 public class SoundeffectManager : MonoBehaviour, ISubscriber<PlaySoundSignal>
 {
     public static SoundeffectManager instance;
-    [SerializeField] AudioSource audioSource;
-    [SerializeField] AudioClip shockwave;
-    [SerializeField] AudioClip ui;
-
+    [SerializeField] AudioSource _audioSource;
+    [SerializeField] AudioClip _shockwave;
+    [SerializeField] AudioClip _looseLife;
+    [SerializeField] AudioClip _newRound;
+    
     private void Awake()
     {
         if (instance != null && instance != this)
@@ -30,25 +31,30 @@ public class SoundeffectManager : MonoBehaviour, ISubscriber<PlaySoundSignal>
     public void SetVolume(float volume)
     {
         if (volume < 0f || volume > 1f) return;
-        audioSource.volume = volume;
+        _audioSource.volume = volume;
     }
 
     public float GetVolume()
     {
-        return audioSource.volume;
+        return _audioSource.volume;
     }
 
     public void OnSignalReceived(PlaySoundSignal s)
     {
+        Debug.Log($"Play Clip {s.clipName}");
         switch (s.clipName)
         {
-            case "ui":
-                audioSource.clip = ui;
-                audioSource.Play();
-                break;
             case "shockwave":
-                audioSource.clip = shockwave;
-                audioSource.Play();
+                _audioSource.clip = _shockwave;
+                _audioSource.Play();
+                break;
+            case "looseLife":
+                _audioSource.clip = _looseLife;
+                _audioSource.Play();
+                break;
+            case "newRound":
+                _audioSource.clip = _newRound;
+                _audioSource.Play();
                 break;
         }
     }

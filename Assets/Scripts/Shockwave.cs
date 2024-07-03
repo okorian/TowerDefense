@@ -8,12 +8,14 @@ public class Shockwave : MonoBehaviour, ISubscriber<RestartGameSignal>
     [SerializeField] LayerMask _enemyLayer;
     [SerializeField] GameObject _shockwaveEffect;
     [SerializeField] TextMeshProUGUI _text;
+
+    int _cost;
     float _maxRadius;
     float _expansionSpeed;
     float _pushForce;
-    int _cost;
-    float[] _currentRadius = { 0f, 0f, 0f, 0f, 0f } ;
+    float[] _currentRadius = { 0f, 0f, 0f, 0f, 0f };
     bool _isShockwaveActive = false;
+    bool _hasLost = true;
     GameController _gameController;
 
     private void Start()
@@ -23,7 +25,16 @@ public class Shockwave : MonoBehaviour, ISubscriber<RestartGameSignal>
         _expansionSpeed = 15f;
         _pushForce = 5f;
         _cost = 50;
+        _text.text = $"{_cost} gold";
         Signalbus.Subscirbe<RestartGameSignal>(this);
+    }
+
+    private void Update()
+    {
+        if (!_hasLost && Input.GetKeyDown(KeyCode.Space))
+        {
+            CastShockwave();
+        }
     }
 
     public void CastShockwave()
@@ -31,8 +42,16 @@ public class Shockwave : MonoBehaviour, ISubscriber<RestartGameSignal>
         if (!_isShockwaveActive && _gameController.PayGold(_cost))
         {
             StartCoroutine(ActivateShockwave());
-            _cost *= 2;
-            _text.text = $"{_cost} g";
+            if (_cost > int.MaxValue / 2)
+            {
+                _cost = int.MaxValue;
+            }
+            else
+            {
+                _cost *= 2;
+            }
+            _text.text = $"{_cost} gold";
+            Signalbus.Fire<ShockwaveSignal>(new ShockwaveSignal());
         }
     }
 
@@ -105,11 +124,15 @@ public class Shockwave : MonoBehaviour, ISubscriber<RestartGameSignal>
     public void OnSignalReceived(RestartGameSignal signal)
     {
         _cost = 50;
-        _text.text = $"{_cost} gold";
     }
 
     private void OnDestroy()
     {
         Signalbus.Unsubscribe<RestartGameSignal>(this);
+    }
+
+    public void StartGame()
+    {
+        _hasLost = false;
     }
 }

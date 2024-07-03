@@ -11,6 +11,7 @@ public class Map : MonoBehaviour, ISubscriber<RestartGameSignal>
     [SerializeField] TowerData _towerData;
     [SerializeField] GameObject _grid;
     [SerializeField] GameObject _towerParent;
+    [SerializeField] GameObject _ruinPrefab;
     [SerializeField] EnemySpawner _enemySpawner;
     [SerializeField] Material _ground;
     public GameObject startCell, goalCell;
@@ -56,12 +57,13 @@ public class Map : MonoBehaviour, ISubscriber<RestartGameSignal>
         if(IsFreeField(x, y))
         {
             GameObject tower = Instantiate(data.towerPrefab, _cells[x][y].gameObject.transform.position + new Vector3(0, 0, -1), new Quaternion());
-            tower.GetComponent<Tower>().Initialize(x, y, data);
+            Tower towerScript = tower.GetComponent<Tower>();
+            towerScript.Initialize(x, y, data);
             tower.transform.parent = _towerParent.transform;
             _hasTowers[x][y] = true;
             if (PathfindingManager.Instance.IsPathAvailable() && _gameController.PayGold(data.price[0]))
             {
-                Signalbus.Fire<NewTowerSignal>(new NewTowerSignal() { position = new Vector2(x * 1.5f - 3.5f, y * 1.5f - 4f) });
+                Signalbus.Fire<NewTowerSignal>(new NewTowerSignal() { position = new Vector2(x * 1.5f - 3.5f, y * 1.5f - 4f), towerName = towerScript.GetName() });
                 return true;
             }
             else
@@ -124,7 +126,7 @@ public class Map : MonoBehaviour, ISubscriber<RestartGameSignal>
 
     public void RemoveTower(int x, int y)
     {
-        if(x < _size && x >= 0 && y < _size && y >= 0)
+        if (x < _size && x >= 0 && y < _size && y >= 0)
         {
             _hasTowers[x][y] = false;
         }
@@ -149,5 +151,18 @@ public class Map : MonoBehaviour, ISubscriber<RestartGameSignal>
         }
 
         _enemySpawner.ResetPath();
+    }
+
+    public void PlaceRuin(int x, int y, string towerName)
+    {
+        GameObject ruin = Instantiate(_ruinPrefab, _cells[x][y].gameObject.transform.position + new Vector3(0, 0, -1), new Quaternion());
+        ruin.GetComponent<Ruin>().Initialize(x, y, towerName);
+        ruin.transform.parent = _towerParent.transform;
+        _hasTowers[x][y] = true;
+    }
+
+    public bool[][] GetMap()
+    {
+        return _hasTowers;
     }
 }
