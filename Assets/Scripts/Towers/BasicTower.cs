@@ -38,7 +38,14 @@ public class BasicTower : Tower, ISubscriber<RestartGameSignal>
         TowerUtil.UpdateRangeIndicator(_lineRenderer, _range[_lvl]);
         _lineRenderer.enabled = false;
 
-        _projectileFactory = data.projectileFactory;
+        if (IsCannon())
+        {
+            _projectileFactory = GameObject.FindWithTag("CannonProjectileFactory").GetComponent<ProjectileFactory>();
+        }
+        else
+        {
+            _projectileFactory = GameObject.FindWithTag("ArrowProjectileFactory").GetComponent<ProjectileFactory>();
+        }
 
         SetTargetMode(0);
 
@@ -72,6 +79,9 @@ public class BasicTower : Tower, ISubscriber<RestartGameSignal>
 
     public override void SetRangeIndicatorActive(bool active)
     {
-        _lineRenderer.enabled = active;
+        if (_lineRenderer != null)
+        {
+            _lineRenderer.enabled = active;
+        }
     }
 }

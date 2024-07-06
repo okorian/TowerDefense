@@ -183,7 +183,7 @@ public class TowerUtil
             float rad = Mathf.Deg2Rad * (i * angle);
             float x = Mathf.Cos(rad) * range;
             float y = Mathf.Sin(rad) * range;
-            points[i] = new Vector3(x, y, -2f);
+            points[i] = new Vector3(x, y, 0f);
         }
 
         lineRenderer.SetPositions(points);

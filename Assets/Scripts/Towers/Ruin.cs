@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Ruin : MonoBehaviour, ISubscriber<WaveFinishedSignal>
+public class Ruin : MonoBehaviour, ISubscriber<ClearRuinSignal>, ISubscriber<RestartGameSignal>
 {
     int _x;
     int _y;
@@ -10,7 +10,8 @@ public class Ruin : MonoBehaviour, ISubscriber<WaveFinishedSignal>
 
     void Start()
     {
-        Signalbus.Subscirbe<WaveFinishedSignal>(this);
+        Signalbus.Subscirbe<ClearRuinSignal>(this);
+        Signalbus.Subscirbe<RestartGameSignal>(this);
     }
 
     public void Initialize(int x, int y, string towerName)
@@ -23,13 +24,19 @@ public class Ruin : MonoBehaviour, ISubscriber<WaveFinishedSignal>
 
     private void OnDestroy()
     {
-        Signalbus.Unsubscribe<WaveFinishedSignal>(this);
+        Signalbus.Unsubscribe<ClearRuinSignal>(this);
+        Signalbus.Unsubscribe<RestartGameSignal>(this);
     }
 
-    public void OnSignalReceived(WaveFinishedSignal signal)
+    public void OnSignalReceived(ClearRuinSignal signal)
     {
         Map.Instance.RemoveTower(_x, _y);
         Signalbus.Fire<TowerSoldSignal>(new TowerSoldSignal() { towerName = _towerName });
+        Destroy(gameObject);
+    }
+
+    public void OnSignalReceived(RestartGameSignal signal)
+    {
         Destroy(gameObject);
     }
 }

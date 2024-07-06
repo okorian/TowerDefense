@@ -61,7 +61,7 @@ public class IceTower : Tower, ISubscriber<RestartGameSignal>
 
     public override bool Upgrade()
     {
-        if (_lvl < 5 && _gameController.PayGold(_price[_lvl + 1]))
+        if (_lvl < 4 && _gameController.PayGold(_price[_lvl + 1]))
         {
             List<Enemy> currentTargets = TowerUtil.FindTargetsInRange(transform.position, _range[_lvl]);
             foreach (Enemy enemy in _lastTargets.Except(currentTargets).ToList())
@@ -72,6 +72,7 @@ public class IceTower : Tower, ISubscriber<RestartGameSignal>
                 }
             }
 
+            Signalbus.Fire<TowerUpgradeSignal>(new TowerUpgradeSignal() { towerName = GetName(), lvl = _lvl });
             _lvl++;
             UpdateLvlSprite();
             TowerUtil.UpdateRangeIndicator(_lineRenderer, _range[_lvl]);

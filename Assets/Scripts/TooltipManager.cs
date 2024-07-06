@@ -89,6 +89,8 @@ public class TooltipManager : MonoBehaviour
         _tooltipsDict.Add("faster", "Four times the speed.\nHotkey: \"F4\"");
         _tooltipsDict.Add("upgrade", "Upgrade tower.\nHotkey: \"U\"");
         _tooltipsDict.Add("sell", "Sell tower.\nHotkey: \"S\"");
+        _tooltipsDict.Add("upgradeAll", "Upgrade all selected towers.\nHotkey: \"U\"");
+        _tooltipsDict.Add("sellAll", "Sell all selected towers.\nHotkey: \"S\"");
     }
 
     private IEnumerator UpdateTMP()

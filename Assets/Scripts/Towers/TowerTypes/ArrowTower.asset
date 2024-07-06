@@ -30,3 +30,8 @@ MonoBehaviour:
   towerSprite: {fileID: -4300350659957852697, guid: 8d8efbca05d432c47a10134021913534, type: 3}
   towerPrefab: {fileID: 3950690726804014250, guid: 528c02f40483fa543bc2e2c2ac52ba87, type: 3}
   projectileFactory: {fileID: 0}
+  isArrow: 1
+  isCannon: 0
+  isFire: 0
+  isIce: 0
+  isGold: 0

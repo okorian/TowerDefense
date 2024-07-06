@@ -7,6 +7,9 @@ TagManager:
   - Cell
   - Tower
   - Enemy
+  - ArrowProjectileFactory
+  - CannonProjectileFactory
+  - FireProjectileFactory
   layers:
   - Default
   - TransparentFX

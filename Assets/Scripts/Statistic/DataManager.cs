@@ -8,7 +8,7 @@ using UnityEngine;
 public class DataManager : MonoBehaviour, ISubscriber<EnemyDiedOnShockwaveSignal>, ISubscriber<EnemyDiedSignal>, 
     ISubscriber<EnemyReachedGoalSignal>, ISubscriber<GameLostSaveSignal>, ISubscriber<NewTowerSignal>, ISubscriber<TowerSoldSignal>, 
     ISubscriber<WaveFinishedSignal>, ISubscriber<ShockwaveSignal>, ISubscriber<GoldEarnedSignal>, ISubscriber<GoldSpentSignal>, 
-    ISubscriber<GoldEnemySpawnedSignal>, ISubscriber<GoldEnemyKilledSignal>
+    ISubscriber<GoldEnemySpawnedSignal>, ISubscriber<GoldEnemyKilledSignal>, ISubscriber<TowerUpgradeSignal>
 {
     [SerializeField] string _dataFilePath;
     [SerializeField] SendMail _sendMail;
@@ -18,7 +18,6 @@ public class DataManager : MonoBehaviour, ISubscriber<EnemyDiedOnShockwaveSignal
     GameData _gameData;
     RoundData _currentRoundData;
     GameController _gameController;
-    Map _map;
     float _roundTime;
 
     private void Start()
@@ -26,10 +25,14 @@ public class DataManager : MonoBehaviour, ISubscriber<EnemyDiedOnShockwaveSignal
         _dataFilePath = Path.Combine(Application.persistentDataPath, "GameData.json");
 
         _gameController = GameController.Instance;
-        _map = Map.Instance;
 
         _gameData = new GameData();
         _currentRoundData = new RoundData();
+        _currentRoundData.arrowTowersUpgraded = new int[4];
+        _currentRoundData.cannonTowersUpgraded = new int[4];
+        _currentRoundData.fireTowersUpgraded = new int[4];
+        _currentRoundData.iceTowersUpgraded = new int[4];
+        _currentRoundData.goldTowersUpgraded = new int[4];
 
         Signalbus.Subscirbe<EnemyDiedOnShockwaveSignal>(this);
         Signalbus.Subscirbe<EnemyDiedSignal>(this);
@@ -43,6 +46,7 @@ public class DataManager : MonoBehaviour, ISubscriber<EnemyDiedOnShockwaveSignal
         Signalbus.Subscirbe<GoldSpentSignal>(this);
         Signalbus.Subscirbe<GoldEnemySpawnedSignal>(this);
         Signalbus.Subscirbe<GoldEnemyKilledSignal>(this);
+        Signalbus.Subscirbe<TowerUpgradeSignal>(this);
     }
 
     private void OnDestroy()
@@ -60,6 +64,7 @@ public class DataManager : MonoBehaviour, ISubscriber<EnemyDiedOnShockwaveSignal
         Signalbus.Unsubscribe<GoldSpentSignal>(this);
         Signalbus.Unsubscribe<GoldEnemySpawnedSignal>(this);
         Signalbus.Unsubscribe<GoldEnemyKilledSignal>(this);
+        Signalbus.Unsubscribe<TowerUpgradeSignal>(this);
     }
 
     private void Update()
@@ -101,18 +106,22 @@ public class DataManager : MonoBehaviour, ISubscriber<EnemyDiedOnShockwaveSignal
     public void NewRound()
     {
         _currentRoundData.roundNumber = _gameController.GetRound();
-        _currentRoundData.map = _map.GetMap();
         _currentRoundData.roundTime = _roundTime;
         _currentRoundData.livesLeft = _gameController.GetLives();
         _gameData.rounds.Add(_currentRoundData);
         _currentRoundData = new RoundData();
+
         _roundTime = 0f;
+        _currentRoundData.arrowTowersUpgraded = new int[4];
+        _currentRoundData.cannonTowersUpgraded = new int[4];
+        _currentRoundData.fireTowersUpgraded = new int[4];
+        _currentRoundData.iceTowersUpgraded = new int[4];
+        _currentRoundData.goldTowersUpgraded = new int[4];
     }
 
     public void LostRound()
     {
         _currentRoundData.roundNumber = _gameController.GetRound();
-        _currentRoundData.map = _map.GetMap();
         _currentRoundData.roundTime = _roundTime;
         _currentRoundData.livesLeft = _gameController.GetLives();
         _gameData.rounds.Add(_currentRoundData);
@@ -193,6 +202,28 @@ public class DataManager : MonoBehaviour, ISubscriber<EnemyDiedOnShockwaveSignal
                 break;
             case "Gold Tower":
                 _currentRoundData.goldTowersSold++;
+                break;
+        }
+    }
+
+    public void OnSignalReceived(TowerUpgradeSignal signal)
+    {
+        switch (signal.towerName)
+        {
+            case "Arrow Tower":
+                _currentRoundData.arrowTowersUpgraded[signal.lvl]++;
+                break;
+            case "Cannon Tower":
+                _currentRoundData.cannonTowersUpgraded[signal.lvl]++;
+                break;
+            case "Fire Tower":
+                _currentRoundData.fireTowersUpgraded[signal.lvl]++;
+                break;
+            case "Ice Tower":
+                _currentRoundData.iceTowersUpgraded[signal.lvl]++;
+                break;
+            case "Gold Tower":
+                _currentRoundData.goldTowersUpgraded[signal.lvl]++;
                 break;
         }
     }

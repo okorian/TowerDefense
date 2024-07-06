@@ -11,6 +11,15 @@ public class NameInput : MonoBehaviour
     [SerializeField] DataManager _dataManager;
     [SerializeField] GameObject _panel;
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Return) && IsInputValid(_inputField.text))
+        {
+            _dataManager.SetPlayerName(_inputField.text);
+            _panel.SetActive(false);
+        }
+    }
+
     void Start()
     {
         _inputField.onValueChanged.AddListener(OnInputValueChanged);

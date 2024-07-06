@@ -12,6 +12,8 @@ public abstract class Tower : MonoBehaviour
     protected int _y;
     protected int _lvl;
     protected int _targetMode;
+    protected bool _isArrow;
+    protected bool _isCannon;
     protected bool _isFire;
     protected bool _isIce;
     protected bool _isGold;
@@ -21,7 +23,6 @@ public abstract class Tower : MonoBehaviour
     protected float[] _attackSpeed;
     protected string _towerName;
     protected GameController _gameController;
-
     protected float _attackTimer;
 
     public virtual void Initialize(int x, int y, TowerData data)
@@ -31,6 +32,8 @@ public abstract class Tower : MonoBehaviour
         _x = x;
         _y = y;
         _lvl = 0;
+        _isArrow = data.isArrow;
+        _isCannon = data.isCannon;
         _isFire = data.isFire;
         _isIce = data.isIce;
         _isGold = data.isGold;
@@ -49,8 +52,9 @@ public abstract class Tower : MonoBehaviour
 
     public virtual bool Upgrade()
     {
-        if (_lvl < 5 && _gameController.PayGold(_price[_lvl + 1]))
+        if (_lvl < 4 && _gameController.PayGold(_price[_lvl + 1]))
         {
+            Signalbus.Fire<TowerUpgradeSignal>(new TowerUpgradeSignal() { towerName = GetName(), lvl = _lvl });
             _lvl++;
             UpdateLvlSprite();
             return true;
@@ -73,10 +77,6 @@ public abstract class Tower : MonoBehaviour
         _gameController.EarnGold(GetRefund());
 
         Map.Instance.PlaceRuin(_x, _y, towerName);
-        /*
-        Map.Instance.RemoveTower(_x, _y);
-        Signalbus.Fire<TowerSoldSignal>(new TowerSoldSignal());
-        */
 
         Destroy(gameObject);
     }
@@ -165,6 +165,16 @@ public abstract class Tower : MonoBehaviour
     public int GetTargetMode()
     {
         return _targetMode;
+    }
+
+    public bool IsArrow()
+    {
+        return _isArrow;
+    }
+
+    public bool IsCannon()
+    {
+        return _isCannon;
     }
 
     public bool IsFire()

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class Enemy : MonoBehaviour, ISubscriber<NewTowerSignal>, ISubscriber<GameLostSignal>, ISubscriber<TowerSoldSignal>
+public class Enemy : MonoBehaviour, ISubscriber<NewTowerSignal>, ISubscriber<RestartGameSignal>, ISubscriber<GameLostSignal>, ISubscriber<TowerSoldSignal>
 {
     [SerializeField] GameObject _burning;
 
@@ -82,6 +82,8 @@ public class Enemy : MonoBehaviour, ISubscriber<NewTowerSignal>, ISubscriber<Gam
         Signalbus.Subscirbe<NewTowerSignal>(this);
         Signalbus.Subscirbe<GameLostSignal>(this);
         Signalbus.Subscirbe<TowerSoldSignal>(this);
+        Signalbus.Subscirbe<RestartGameSignal>(this);
+        
         this._map = Map.Instance;
         _pathfindingManager = PathfindingManager.Instance;
         _gameController = GameController.Instance;
@@ -213,6 +215,7 @@ public class Enemy : MonoBehaviour, ISubscriber<NewTowerSignal>, ISubscriber<Gam
         Signalbus.Unsubscribe<GameLostSignal>(this);
         Signalbus.Unsubscribe<TowerSoldSignal>(this);
         Signalbus.Unsubscribe<NewTowerSignal>(this);
+        Signalbus.Unsubscribe<RestartGameSignal>(this);
     }
 
     public int GetLives()
@@ -319,5 +322,10 @@ public class Enemy : MonoBehaviour, ISubscriber<NewTowerSignal>, ISubscriber<Gam
     private void OnCollisionEnter(Collision collision)
     {
         Debug.Log("OnCollisionEnter");
+    }
+
+    public void OnSignalReceived(RestartGameSignal signal)
+    {
+        Destroy(gameObject);
     }
 }

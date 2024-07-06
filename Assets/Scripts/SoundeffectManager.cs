@@ -54,6 +54,7 @@ public class SoundeffectManager : MonoBehaviour, ISubscriber<PlaySoundSignal>
                 break;
             case "newRound":
                 _audioSource.clip = _newRound;
+                _audioSource.time = 1.5f;
                 _audioSource.Play();
                 break;
         }

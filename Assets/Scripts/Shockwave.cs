@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class Shockwave : MonoBehaviour, ISubscriber<RestartGameSignal>
+public class Shockwave : MonoBehaviour, ISubscriber<RestartGameSignal>, ISubscriber<ActivateShockwaveSignal>
 {
     [SerializeField] LayerMask _enemyLayer;
     [SerializeField] GameObject _shockwaveEffect;
@@ -14,8 +14,8 @@ public class Shockwave : MonoBehaviour, ISubscriber<RestartGameSignal>
     float _expansionSpeed;
     float _pushForce;
     float[] _currentRadius = { 0f, 0f, 0f, 0f, 0f };
-    bool _isShockwaveActive = false;
-    bool _hasLost = true;
+    bool _isShockwaveActive;
+    bool _isActive;
     GameController _gameController;
 
     private void Start()
@@ -25,13 +25,16 @@ public class Shockwave : MonoBehaviour, ISubscriber<RestartGameSignal>
         _expansionSpeed = 15f;
         _pushForce = 5f;
         _cost = 50;
+        _isActive = false;
+        _isShockwaveActive = false;
         _text.text = $"{_cost} gold";
         Signalbus.Subscirbe<RestartGameSignal>(this);
+        Signalbus.Subscirbe<ActivateShockwaveSignal>(this);
     }
 
     private void Update()
     {
-        if (!_hasLost && Input.GetKeyDown(KeyCode.Space))
+        if (_isActive && Input.GetKeyDown(KeyCode.Space))
         {
             CastShockwave();
         }
@@ -39,7 +42,7 @@ public class Shockwave : MonoBehaviour, ISubscriber<RestartGameSignal>
 
     public void CastShockwave()
     {
-        if (!_isShockwaveActive && _gameController.PayGold(_cost))
+        if (_isActive && !_isShockwaveActive && _gameController.PayGold(_cost))
         {
             StartCoroutine(ActivateShockwave());
             if (_cost > int.MaxValue / 2)
@@ -124,15 +127,18 @@ public class Shockwave : MonoBehaviour, ISubscriber<RestartGameSignal>
     public void OnSignalReceived(RestartGameSignal signal)
     {
         _cost = 50;
+        _text.text = $"{_cost} gold";
+        _isActive = false;
+        _isShockwaveActive = false;
+    }
+
+    public void OnSignalReceived(ActivateShockwaveSignal signal)
+    {
+        _isActive = true;
     }
 
     private void OnDestroy()
     {
         Signalbus.Unsubscribe<RestartGameSignal>(this);
-    }
-
-    public void StartGame()
-    {
-        _hasLost = false;
     }
 }

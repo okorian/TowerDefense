@@ -5,8 +5,8 @@ using UnityEngine;
 public class FireTower : Tower, ISubscriber<RestartGameSignal>
 {
     [SerializeField] LineRenderer _lineRenderer;
-    int[] _burnDmg = new int[] { 1, 2, 2, 3, 3 };
-    int[] _burnStacks = new int[] { 2, 2, 3, 3, 4 };
+    int[] _burnDmg = new int[] { 1, 2, 3, 3, 4 };
+    int[] _burnStacks = new int[] { 3, 3, 4, 5, 5 };
     ProjectileFactory _projectileFactory;
 
     public override void Initialize(int x, int y, TowerData data)
@@ -20,7 +20,7 @@ public class FireTower : Tower, ISubscriber<RestartGameSignal>
         TowerUtil.UpdateRangeIndicator(_lineRenderer, _range[_lvl]);
         _lineRenderer.enabled = false;
 
-        _projectileFactory = data.projectileFactory;
+        _projectileFactory = GameObject.FindWithTag("FireProjectileFactory").GetComponent<ProjectileFactory>();
 
         SetTargetMode(5);
 

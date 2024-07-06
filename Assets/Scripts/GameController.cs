@@ -26,6 +26,8 @@ public class GameController : MonoBehaviour, ISubscriber<EnemyDiedSignal>, ISubs
     bool _roundHasFinished;
     bool _gameLost;
     bool _firstTowerPlaced;
+    bool _hasPlayedSound;
+    bool _hasClearedRuins;
     //float _interest;
     //float _interestTimer;
     float _goldTimer;
@@ -58,6 +60,8 @@ public class GameController : MonoBehaviour, ISubscriber<EnemyDiedSignal>, ISubs
         _roundHasFinished = true;
         _gameLost = false;
         _firstTowerPlaced = false;
+        _hasPlayedSound = false;
+        _hasClearedRuins = false;
 
         _goldTimer = 0f;
         //_interestTimer = 0f;
@@ -114,7 +118,20 @@ public class GameController : MonoBehaviour, ISubscriber<EnemyDiedSignal>, ISubs
 
         if (!_roundIsRunning && _roundHasFinished)
         {
+            if (!_hasClearedRuins)
+            {
+                Signalbus.Fire<ClearRuinSignal>(new ClearRuinSignal());
+                _hasClearedRuins = true;
+            }
+
             _pauseTimer += Time.deltaTime;
+
+            if(_pauseTimer >= 8 && !_hasPlayedSound)
+            {
+                Signalbus.Fire<PlaySoundSignal>(new PlaySoundSignal() { clipName = "newRound" });
+                _hasPlayedSound = true;
+            }
+
             if(_pauseTimer >= 10)
             {
                 _pauseTimer = 0;
@@ -126,10 +143,11 @@ public class GameController : MonoBehaviour, ISubscriber<EnemyDiedSignal>, ISubs
                 _roundTMP.text = "Round: " + _round;
 
                 Signalbus.Fire<SpawnEnemyWaveSignal>(new SpawnEnemyWaveSignal() { round = _round, buff = _buff });
-                Signalbus.Fire<PlaySoundSignal>(new PlaySoundSignal() { clipName = "newRound" });
 
                 _roundIsRunning = true;
                 _roundHasFinished = false;
+                _hasPlayedSound = false;
+                _hasClearedRuins = false;
             }
         }
     }
@@ -175,6 +193,8 @@ public class GameController : MonoBehaviour, ISubscriber<EnemyDiedSignal>, ISubs
         Signalbus.Fire<GameLostSignal>(new GameLostSignal());
         _roundIsRunning = false;
         _roundHasFinished = false;
+        _hasPlayedSound = false;
+        _hasClearedRuins = false;
         _gameLost = true;
         _gameLostPanel.SetActive(true);
     }
@@ -216,6 +236,8 @@ public class GameController : MonoBehaviour, ISubscriber<EnemyDiedSignal>, ISubs
         _roundHasFinished = true;
         _gameLost = false;
         _firstTowerPlaced = false;
+        _hasPlayedSound = false;
+        _hasClearedRuins = false;
 
          _goldTimer = 0f;
         //_interestTimer = 0f;
@@ -229,6 +251,7 @@ public class GameController : MonoBehaviour, ISubscriber<EnemyDiedSignal>, ISubs
 
         _timeScale.ScaleTime(1f);
 
+        Debug.Log($"Fire restart Game Signal");
         Signalbus.Fire<RestartGameSignal>(new RestartGameSignal());
         _gameLostPanel.SetActive(false);
     }
@@ -263,11 +286,17 @@ public class GameController : MonoBehaviour, ISubscriber<EnemyDiedSignal>, ISubs
         {
             _timeScale.ResumeTime();
             _firstTowerPlaced = true;
+            Signalbus.Fire<ActivateShockwaveSignal>(new ActivateShockwaveSignal());
         }
     }
 
     public int GetLives()
     {
         return _lives;
+    }
+
+    public int GetGold()
+    {
+        return _gold;
     }
 }

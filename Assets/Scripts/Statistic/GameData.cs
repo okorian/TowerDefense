@@ -32,7 +32,11 @@ public class RoundData
     public int fireTowersSold;
     public int iceTowersSold;
     public int goldTowersSold;
+    public int[] arrowTowersUpgraded;
+    public int[] cannonTowersUpgraded;
+    public int[] fireTowersUpgraded;
+    public int[] iceTowersUpgraded;
+    public int[] goldTowersUpgraded;
     public int boomButtonUsed;
     public int boomButtonKills;
-    public bool[][] map;
 }

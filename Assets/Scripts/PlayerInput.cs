@@ -6,7 +6,7 @@ public class PlayerInput : MonoBehaviour, ISubscriber<GameLostSignal>, ISubscrib
 {
     [SerializeField] Camera _mainCamera;
     [SerializeField] DisplaySelection _displaySelection;
-    [SerializeField] GameObject towerPreviewPrefab;
+    [SerializeField] GameObject _towerPreviewPrefab;
     [SerializeField] GameObject _menu;
     [SerializeField] GameObject _feedbackPanel;
     [SerializeField] TimeScale _timeScale;
@@ -118,13 +118,62 @@ public class PlayerInput : MonoBehaviour, ISubscriber<GameLostSignal>, ISubscrib
                                 }
                             }
                         }
-                        else if (hitTransform.CompareTag("Tower") || hitTransform.CompareTag("Enemy"))
+                        else if (hitTransform.CompareTag("Tower"))
                         {
                             if (towerPreviewInstance != null)
                             {
                                 _towerData = null;
                                 Destroy(towerPreviewInstance);
                             }
+
+                            if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
+                            {
+                                Tower towerComponent = hitTransform.GetComponent<Tower>();
+                                if (towerComponent != null)
+                                {
+                                    _displaySelection.AddTowerToSelection(towerComponent);
+                                }
+                            }
+
+                            else if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))
+                            {
+                                Tower towerComponent = hitTransform.GetComponent<Tower>();
+                                if (towerComponent != null)
+                                {
+                                    _displaySelection.ClearSelection();
+                                    Tower[] allTowers = FindObjectsByType<Tower>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+                                    foreach (Tower tower in allTowers)
+                                    {
+                                        if (tower.GetType() == towerComponent.GetType())
+                                        {
+                                            if(tower.GetType() == typeof(BasicTower))
+                                            {
+                                                if(towerComponent.IsArrow() == tower.IsArrow())
+                                                {
+                                                    _displaySelection.AddTowerToSelection(tower);
+                                                }
+                                            }
+                                            else
+                                            {
+                                                _displaySelection.AddTowerToSelection(tower);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                _displaySelection.Select(hitTransform.gameObject);
+                            }
+                        }
+                        else if (hitTransform.CompareTag("Enemy"))
+                        {
+                            if (towerPreviewInstance != null)
+                            {
+                                _towerData = null;
+                                Destroy(towerPreviewInstance);
+                            }
+
                             _displaySelection.Select(hitTransform.gameObject);
                         }
                         else
@@ -215,7 +264,7 @@ public class PlayerInput : MonoBehaviour, ISubscriber<GameLostSignal>, ISubscrib
             Destroy(towerPreviewInstance);
         }
 
-        towerPreviewInstance = Instantiate(towerPreviewPrefab);
+        towerPreviewInstance = Instantiate(_towerPreviewPrefab);
         towerPreviewInstance.GetComponent<TowerPreview>().Initialize(data);
         towerPreviewInstance.gameObject.transform.localScale = new Vector3(1.5f, 1.5f, 1);
         towerPreviewInstance.SetActive(false);

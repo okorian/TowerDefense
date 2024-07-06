@@ -19,4 +19,14 @@ public class Border : MonoBehaviour
             Signalbus.Fire<EnemyDiedOnShockwaveSignal>(new EnemyDiedOnShockwaveSignal());
         };
     }
+
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.gameObject.CompareTag("Enemy"))
+        {
+            _gameController.EarnGold(other.gameObject.GetComponent<Enemy>().GetBounty() / 2);
+            Destroy(other.gameObject);
+            Signalbus.Fire<EnemyDiedOnShockwaveSignal>(new EnemyDiedOnShockwaveSignal());
+        };
+    }
 }

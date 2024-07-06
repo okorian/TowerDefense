@@ -2282,7 +2282,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _audioSource: {fileID: 955822646}
   _shockwave: {fileID: 8300000, guid: 18281e402f89a0549a89e0a88db968c5, type: 3}
-  _looseLife: {fileID: 0}
+  _looseLife: {fileID: 8300000, guid: fc1bd3a23167e4645a5a0ef5499b338f, type: 3}
+  _newRound: {fileID: 8300000, guid: b571b6b7f4712d54ea2e9e9cf67be28a, type: 3}
 --- !u!82 &955822646
 AudioSource:
   m_ObjectHideFlags: 0
@@ -2871,6 +2872,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 788b6bfa83ee2ff46bf3782b901d8463, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _dataManager: {fileID: 0}
   resolutionDropdown: {fileID: 855683023}
   isMainMenu: 1
 --- !u!1 &1247703701

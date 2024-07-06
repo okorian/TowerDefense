@@ -11,6 +11,8 @@ public class TowerData : ScriptableObject
     public Sprite towerSprite;
     public GameObject towerPrefab;
     public ProjectileFactory projectileFactory;
+    public bool isArrow;
+    public bool isCannon;
     public bool isFire;
     public bool isIce;
     public bool isGold;
